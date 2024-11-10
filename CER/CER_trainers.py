@@ -328,34 +328,6 @@ class HCCLTrainer(object):
             loss_camintra += F.cross_entropy(percam_inputs, mapped_targets.long())
         return loss_camintra
 
-    # def calculate_loss_camintra_hard(self, args, labels, camids, f_out, epoch, memory_class_mapper, init_intra_id_feat,
-    #                             percam_tempV, cams_num):
-    #     loss_camintra = torch.tensor([0.]).cuda()
-    #     uniquepercams = torch.unique(camids)
-    #     uniquecams = torch.unique(self.all_img_cams)
-    #
-    #     for cc in uniquepercams:
-    #         intra_cam_proxy_features = percam_tempV[cams_num[cc]:cams_num[cc + 1]]
-    #         inds = torch.nonzero(camids == cc).squeeze(-1)
-    #         if len(inds) == 0:
-    #             continue
-    #         percam_targets = labels[inds]
-    #         percam_feat = f_out[inds]
-    #         mapped_targets = [memory_class_mapper[cc][int(k)] for k in percam_targets]
-    #         mapped_targets = torch.tensor(mapped_targets).to(torch.device('cuda'))
-    #         percam_inputs = torch.matmul(percam_feat, intra_cam_proxy_features.t().cuda())
-    #         # percam_inputs = kendalltau(percam_feat, intra_cam_proxy_features)
-    #         percam_inputs /= self.beta  # similarity score before softmax
-    #         loss = 0.
-    #         percam_inputs = torch.exp(percam_inputs)
-    #         for idx, (exp_i_s, lb) in enumerate(zip(percam_inputs, mapped_targets)):
-    #             pos_sim, pos_ind, neg_sim, neg_ind = self.find_hardest_support2(exp_i_s, idx, lb, labels_s)
-    #             loss += (-torch.log((pos_sim.sum() / (pos_sim.sum() + neg_sim.sum() + 1e-6)) + 1e-6))
-    #         loss_camintra = loss / len(percam_inputs)
-    #
-    #         loss_camintra += F.cross_entropy(percam_inputs, mapped_targets.long())
-    #     return loss_camintra
-
     def calculate_loss_caminter_con(self, args, labels, camids, f_out, epoch, memory_class_mapper, init_intra_id_feat,
                                     percam_tempV):
         loss_caminter_con = torch.tensor([0.]).cuda()
@@ -441,10 +413,6 @@ class HCCLTrainer(object):
                    cams_num):
 
         self.beta2 = 0.07
-        # loss_camintra_con = self.calculate_loss_camintra_con(args, labels, camids, f_out, epoch, memory_class_mapper,
-        #                                                      init_intra_id_feat, percam_tempV, cams_num)
-        # loss_caminter_con = self.calculate_loss_caminter_con(args, labels, camids, f_out, epoch, memory_class_mapper,
-        #                                                      init_intra_id_feat, percam_tempV)
         loss_camintra_con = self.calculate_loss_camintra(args, labels, camids, f_out, epoch, memory_class_mapper,
                                                          init_intra_id_feat, percam_tempV, cams_num)
         loss_caminter_con = self.calculate_loss_caminter(args, labels, camids, f_out, epoch, memory_class_mapper,
@@ -456,19 +424,6 @@ class HCCLTrainer(object):
                          epoch, memory_class_mapper, init_intra_id_feat, percam_tempV, cams_num):
 
         self.beta2 = 0.07
-        # loss_camintra_con = self.calculate_loss_camintra_con(args, labels_intra, camids_intra, f_out_intra, epoch,
-        #                                                      memory_class_mapper,
-        #                                                      init_intra_id_feat, percam_tempV, cams_num)
-        # loss_caminter_con = self.calculate_loss_caminter_con(args, labels_inter, camids_inter, f_out_inter, epoch,
-        #                                                      memory_class_mapper,
-        #                                                      init_intra_id_feat, percam_tempV)
-
-        # loss_camintra_con = self.calculate_loss_camintra_con(args, labels_inter, camids_inter, f_out_inter, epoch,
-        #                                                  memory_class_mapper,
-        #                                                  init_intra_id_feat, percam_tempV, cams_num)
-        # loss_caminter_con = self.calculate_loss_caminter_con(args, labels_intra, camids_intra, f_out_intra, epoch,
-        #                                                  memory_class_mapper,
-        #                                                  init_intra_id_feat, percam_tempV)
 
         loss_camintra_con = self.calculate_loss_camintra(args, labels_intra, camids_intra, f_out_intra, epoch,
                                                          memory_class_mapper,
